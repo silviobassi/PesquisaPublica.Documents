@@ -1,0 +1,37 @@
+﻿@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+AddElementTag("microService", $shape=EightSidedShape(), $legendText="micro service (eight sided) (no text, no back color)")
+AddRelTag("service1", $textColor="red")
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include DEVICONS/angular.puml
+!include DEVICONS/java.puml
+!include DEVICONS/msql_server.puml
+!include FONTAWESOME/users.puml
+
+Person(users, "Usuários", "Acessam páginas de resultados, respondem e gerenciam questionários", $sprite="users")
+
+System_Ext(cdn, "Cloudflare", "Distribui conteúdo estático e garante a performance das páginas")
+ContainerQueue_Ext( servicebus, "RabbitMQ", "Fila", "Processa as respostas de forma desacoplada e garante alta disponibilidade")
+
+System_Boundary(system, "Sistemas de Pesquisa"){
+    Container(blazor, "Web Application SSR", "Blazor Web Server", "Coleta respostas dos questionários e solicita resultados")
+    Container(webapi_coleta, "Serviço de Coleta", "AspNet WebApi MVC", "Processa e armazena as respostas dos questionários", $tags="microService")
+    Container(webapi_processamento, "Serviço de Processamento", "AspNet WebApi MVC", "Consome respostas da fila, consulta resultados sumarizados e gerencia pesquisas",$tags="microService")
+
+ContainerDb( mongodb, "MongoDB", "Database", "Armazena os questionários respondidos das pesquisas e novas pesquisas para serem respondidas")
+    Rel(blazor, webapi_processamento, "Consulta resultados, das pesquisas, sumarizados ",HTTPS/JSON)
+    Rel(blazor, webapi_coleta, "Envia o questionário respondido",HTTPS/JSON)
+    Rel(webapi_processamento, mongodb, "Armazena, gerencia e consulta em")
+    Rel(webapi_coleta, servicebus, "Publica questionário respondido na fila no", AMPQ)
+    Rel(webapi_processamento, servicebus, "Consome questionário respondido da fila de", "AMPQ")
+}
+
+
+Rel(cdn, blazor, "Solicita Páginas de questionário e resultados de pesquisas sumarizados renderizadas", "HTTPS")
+Rel(users, blazor, "Acessa páginas de questionário e resultados de pesquisas sumarizados")
+Rel_Right(cdn, users, "Entrega páginas renderizadas", "HTTPS")
+
+@enduml

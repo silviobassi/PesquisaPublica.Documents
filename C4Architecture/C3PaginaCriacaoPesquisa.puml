@@ -1,0 +1,34 @@
+﻿@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+AddRelTag("async", $lineStyle = DashedLine())
+SHOW_PERSON_OUTLINE()
+
+Person(admin, "Administrador", "Gerencia questionários e resultados")
+
+System_Ext(cdn, "Cloudflare", "Distribui conteúdo estático e garante a performance das páginas")
+ContainerDb( mongodb, "MongoDB", "Database", "Armazena os questionários respondidos das pesquisas")
+
+Container_Boundary(WebApp, "Web Application SSR") {
+    Component(respQuestionario, "Página para Responder Questionário", "Razor, HTML, C#", "Interface para responder questionário")
+    Component(admQuestionario, "Página de Criação de Questionário", "Razor, HTML, C#", "Interface para criar e gerenciar pesquisas")
+    Component(resultQuestionario, "Página de Resultados", "Razor, HTML, C#", "Interface para consulta de resultados sumarizados")
+}
+
+Container_Boundary(ServProcessamento, "Serviço de Processamento") {
+    Component(contrQuestionario, "Controlador de Gerenciamento do Questionário", "ASP.NET WebApi MVC", "Estrutura o questionário para criação, o questionário respondido para o armazenamento e os resultados sumarizados para apresentação")
+    Component(servQuestionario,"Gerenciamento dos Questionários","C#", "Controla os fluxos de criação, armazenamento de respostas e apresentações dos questionários")
+    Component(repoQuestionario, "Repositório de Questionários", "C#, MongoDB.Driver", "Armazena novos questionários e questionários respondidos")
+}
+
+Rel(admin, admQuestionario, "Acessa em pesquisapublica/criacao o", "HTTPS", $tags="async")
+Rel(admQuestionario, cdn, "Renderiza a página para", "HTTPS", $tags="async")
+Rel_Right(cdn, admin, "Entrega a página renderizada para", "HTTPS", $tags="async")
+Rel(admQuestionario, contrQuestionario, "Envia o questionário para ser criado pesquisapublica/questionarios o", "POST/HTTPS/JSON", $tags="async")
+Rel(contrQuestionario, servQuestionario, "Acessa o", $tags="async")
+Rel(servQuestionario, repoQuestionario, "Acessa o", $tags="async")
+Rel(repoQuestionario, mongodb, "Armazena os questionários respondidos das pesquisas no", $tags="async")
+
+
+@enduml
+

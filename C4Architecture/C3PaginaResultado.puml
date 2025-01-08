@@ -1,0 +1,31 @@
+﻿@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+AddRelTag("async", $lineStyle = DashedLine())
+
+SHOW_PERSON_OUTLINE()
+
+Person(analyst, "Analista", "Consulta os resultados sumarizados da pesquisa")
+
+System_Ext(cdn, "Cloudflare", "Distribui conteúdo estático e garante a performance das páginas")
+
+ContainerDb( mongodb, "MongoDB", "Database", "Armazena os questionários respondidos das pesquisas")
+
+Container_Boundary(WebApp, "Web Application SSR") {
+    Component(respQuestionario, "Página para Responder Questionário", "Razor, HTML, C#", "Interface para responder questionário")
+    Component(admQuestionario, "Página de Criação de Questionário", "Razor, HTML, C#", "Interface para criar e gerenciar pesquisas")
+    Component(resultQuestionario, "Página de Resultados", "Razor, HTML, C#", "Interface para consulta de resultados sumarizados")
+}
+Container_Boundary(ServProcessamento, "Serviço de Processamento") {
+    Component(contrQuestionario, "Controlador de Gerenciamento do Questionário", "ASP.NET WebApi MVC", "Estrutura o questionário para criação, o questionário respondido para o armazenamento e os resultados sumarizados para apresentação")
+    Component(queryQuestionario, "Consulta de Resultados", "MongoDB.Driver", "Serviço de recuperação de resultados sumarizados")
+}
+
+Rel(analyst, resultQuestionario, "Acessa em pesquisapublica/eleitoral/55552024/resultado o", "HTTPS", $tags="async")
+Rel(resultQuestionario, cdn, "Renderiza a página para", "HTTPS", $tags="async")
+Rel_Right(cdn, analyst, "Entrega a página renderizada para", "HTTPS", $tags="async")
+Rel(resultQuestionario, contrQuestionario, "Acessa em pesquisapublica/eleitoral/55552024/resultado o", "HTTPS/JSON", $tags="async")
+Rel(contrQuestionario, queryQuestionario, "Acessa o", $tags="async")
+Rel(queryQuestionario, mongodb, "Consulta os resultados no", $tags="async")
+@enduml
+

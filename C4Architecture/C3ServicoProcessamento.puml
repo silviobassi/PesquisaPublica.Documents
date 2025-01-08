@@ -1,0 +1,21 @@
+﻿@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+AddRelTag("async", $lineStyle = DashedLine())
+
+ContainerDb( mongodb, "MongoDB", "Database", "Armazena os questionários respondidos das pesquisas e novas pesquisas para serem respondidas")
+
+ContainerQueue_Ext( servicebus, "RabbitMQ", "Fila", "Processa as respostas de forma desacoplada e garante alta disponibilidade")
+
+Container_Boundary(ServProcessamento, "Serviço de Processamento") {
+    Component(repoQuestionario, "Repositório de Questionários", "C#, MongoDB.Driver", "Armazena novos questionários e questionários respondidos")
+    Component(servConsumer, "Consumidor de Respostas", "C#, Azure.Messaging.ServiceBus", "Processa as respostas de forma desacoplada e garante alta disponibilidade")
+    Component(servQuestionario,"Gerenciamento dos Questionários","C#", "Controla os fluxos de criação, armazenamento de respostas e apresentações dos questionários")
+    Component(repoQuestionario, "Repositório de Questionários", "C#, MongoDB.Driver", "Armazena novos questionários e questionários respondidos")
+}
+
+Rel(repoQuestionario, mongodb, "Armazena os questionários respondidos das pesquisas no", $tags="async")
+Rel(servConsumer, servicebus, "Consome o questionário respondido de", "AMPQ", $tags="async")
+Rel(servConsumer, servQuestionario,"Acessa o", $tags="async")
+Rel(servQuestionario, repoQuestionario, "Acessa o", $tags="async")
+@enduml
+

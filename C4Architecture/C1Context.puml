@@ -1,0 +1,20 @@
+﻿@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(responder, "Respondedor", "Preenche e envia respostas para o questionário")
+Person(analyst, "Analista", "Consulta os resultados sumarizados da pesquisa")
+System(system, "Sistema de Pesquisa", "Plataforma para gerenciamento de questionários, coleta de respostas e análise dos resultados das pesquisas públicas")
+
+System_Ext(cdn, "Cloudflare", "Distribui conteúdo estático e garante a performance das páginas")
+System(redis, "Redis", "Armazena respostas sumarizadas para acesso rápido")
+System(mongodb, "MongoDB", "Armazena os questionários respondidos das pesquisas e novas pesquisas para serem respondidas")
+System_Ext(servicebus, "RabbitMQ", "Fila para processar as respostas de forma desacoplada")
+
+Rel(responder, system, "Solicita renderização da página do questionário")
+Rel(analyst, system, "Solicita renderização da página com os resultados sumarizados")
+Rel(cdn, system, "Encaminha as requisições")
+Rel(system, redis, "Solicita resultados sumarizados")
+Rel(system, mongodb, "Armazena respostas")
+Rel(system, servicebus, "Utiliza fila para processar respostas")
+
+@enduml

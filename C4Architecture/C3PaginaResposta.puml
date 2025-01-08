@@ -1,0 +1,31 @@
+﻿@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+AddRelTag("async", $lineStyle = DashedLine())
+
+SHOW_PERSON_OUTLINE()
+
+Person(respondedor, "Respondedor", "Preenche e envia respostas para o questionário")
+System_Ext(cdn, "Cloudflare", "Distribui conteúdo estático e garante a performance das páginas")
+
+ContainerQueue_Ext( servicebus, "RabbitMQ", "Fila", "Processa as respostas de forma desacoplada e garante alta disponibilidade")
+
+Container_Boundary(WebApp, "Web Application SSR") {
+    Component(respQuestionario, "Página para Responder Questionário", "Razor, HTML, C#", "Interface para responder questionário")
+    Component(admQuestionario, "Página de Criação de Questionário", "Razor, HTML, C#", "Interface para criar e gerenciar pesquisas")
+    Component(resultQuestionario, "Página de Resultados", "Razor, HTML, C#", "Interface para consulta de resultados sumarizados")
+}
+
+Container_Boundary(ServColeta, "Serviço de Coleta") {
+    Component(contrResposta, "Controller de Publicação de Respostas", "ASP.NET WebApi MVC", "Estrutura a resposta para a publicação")
+    Component(servPublicacao, "Serviço de Publicação de Respostas", "Azure.Messaging.ServiceBus", "Publica respostas de questionários")
+}
+
+Rel(respondedor, respQuestionario, "Acessa em pesquisapublica/eleitoral/55552024 o", "HTTPS", $tags="async")
+Rel(respQuestionario, cdn, "Renderiza a página para", "HTTPS", $tags="async")
+Rel_Right(cdn, respondedor, "Entrega a página renderizada para", "HTTPS", $tags="async")
+Rel(contrResposta, servPublicacao, "Acessa o", $tags="async")
+Rel(servPublicacao, servicebus, "Publica o questionário respondido em", "AMPQ", $tags="async")
+Rel(respQuestionario, contrResposta, "Envia respostas de questionário para pesquisapublica.com/coletas/enviar_resposta", "POST/HTTPS/JSON", $tags="async")
+@enduml
+
