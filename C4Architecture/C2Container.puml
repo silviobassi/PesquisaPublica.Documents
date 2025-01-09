@@ -14,7 +14,7 @@ AddRelTag("service1", $textColor="red")
 Person(users, "Usuários", "Acessam páginas de resultados, respondem e gerenciam questionários", $sprite="users")
 
 System_Ext(cdn, "Cloudflare", "Distribui conteúdo estático e garante a performance das páginas")
-ContainerQueue_Ext( servicebus, "RabbitMQ", "Fila", "Processa as respostas de forma desacoplada e garante alta disponibilidade")
+ContainerQueue_Ext( servicebus, "Azure Service Bus", "Fila", "Processa as respostas de forma desacoplada e garante alta disponibilidade")
 
 System_Boundary(system, "Sistemas de Pesquisa"){
     Container(blazor, "Web Application SSR", "Blazor Web Server", "Coleta respostas dos questionários e solicita resultados")

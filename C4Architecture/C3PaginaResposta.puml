@@ -8,7 +8,7 @@ SHOW_PERSON_OUTLINE()
 Person(respondedor, "Respondedor", "Preenche e envia respostas para o questionário")
 System_Ext(cdn, "Cloudflare", "Distribui conteúdo estático e garante a performance das páginas")
 
-ContainerQueue_Ext( servicebus, "RabbitMQ", "Fila", "Processa as respostas de forma desacoplada e garante alta disponibilidade")
+ContainerQueue_Ext( servicebus, "Azure Service Bus", "Fila", "Processa as respostas de forma desacoplada e garante alta disponibilidade")
 
 Container_Boundary(WebApp, "Web Application SSR") {
     Component(respQuestionario, "Página para Responder Questionário", "Razor, HTML, C#", "Interface para responder questionário")
@@ -26,6 +26,6 @@ Rel(respQuestionario, cdn, "Renderiza a página para", "HTTPS", $tags="async")
 Rel_Right(cdn, respondedor, "Entrega a página renderizada para", "HTTPS", $tags="async")
 Rel(contrResposta, servPublicacao, "Acessa o", $tags="async")
 Rel(servPublicacao, servicebus, "Publica o questionário respondido em", "AMPQ", $tags="async")
-Rel(respQuestionario, contrResposta, "Envia respostas de questionário para pesquisapublica.com/coletas/enviar_resposta", "POST/HTTPS/JSON", $tags="async")
+Rel(respQuestionario, contrResposta, "Envia respostas de questionário para pesquisapublica.com/pesquisas/enviar_resposta", "POST/HTTPS/JSON", $tags="async")
 @enduml
 

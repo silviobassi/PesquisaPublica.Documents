@@ -4,7 +4,7 @@ AddRelTag("async", $lineStyle = DashedLine())
 
 ContainerDb( mongodb, "MongoDB", "Database", "Armazena os questionários respondidos das pesquisas e novas pesquisas para serem respondidas")
 
-ContainerQueue_Ext( servicebus, "RabbitMQ", "Fila", "Processa as respostas de forma desacoplada e garante alta disponibilidade")
+ContainerQueue_Ext( servicebus, "Azure Service Bus", "Fila", "Processa as respostas de forma desacoplada e garante alta disponibilidade")
 
 Container_Boundary(ServProcessamento, "Serviço de Processamento") {
     Component(repoQuestionario, "Repositório de Questionários", "C#, MongoDB.Driver", "Armazena novos questionários e questionários respondidos")

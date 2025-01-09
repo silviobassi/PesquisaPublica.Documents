@@ -8,7 +8,7 @@ System(system, "Sistema de Pesquisa", "Plataforma para gerenciamento de question
 System_Ext(cdn, "Cloudflare", "Distribui conteúdo estático e garante a performance das páginas")
 System(redis, "Redis", "Armazena respostas sumarizadas para acesso rápido")
 System(mongodb, "MongoDB", "Armazena os questionários respondidos das pesquisas e novas pesquisas para serem respondidas")
-System_Ext(servicebus, "RabbitMQ", "Fila para processar as respostas de forma desacoplada")
+System_Ext(servicebus, "Azure Service Bus", "Fila para processar as respostas de forma desacoplada")
 
 Rel(responder, system, "Solicita renderização da página do questionário")
 Rel(analyst, system, "Solicita renderização da página com os resultados sumarizados")
