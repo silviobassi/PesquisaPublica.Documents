@@ -6,9 +6,6 @@ AddRelTag("service1", $textColor="red")
 
 !define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
 !define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
-!include DEVICONS/angular.puml
-!include DEVICONS/java.puml
-!include DEVICONS/msql_server.puml
 !include FONTAWESOME/users.puml
 
 Person(users, "Usuários", "Acessam páginas de resultados, respondem e gerenciam questionários", $sprite="users")
