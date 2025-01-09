@@ -18,6 +18,6 @@ Rel(users, system, "Acessa páginas de questionário e resultados de pesquisas s
 Rel(cdn, system, "Encaminha as requisições")
 Rel(system, redis, "Solicita resultados sumarizados")
 Rel(system, mongodb, "Armazena respostas")
-Rel(system, servicebus, "Utiliza fila para processar respostas")
+Rel(system, servicebus, "Utiliza fila para coletar e processar respostas")
 
 @enduml
