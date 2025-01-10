@@ -9,14 +9,12 @@ Person(users, "Usuários", "Acessam páginas de resultados, respondem e gerencia
 System(system, "Sistema de Pesquisa", "Plataforma para gerenciamento de questionários, coleta de respostas e análise dos resultados das pesquisas públicas")
 
 System_Ext(cdn, "Cloudflare", "Distribui conteúdo estático e garante a performance das páginas")
-System(redis, "Redis", "Armazena respostas sumarizadas para acesso rápido")
 System(mongodb, "MongoDB", "Armazena os questionários respondidos das pesquisas e novas pesquisas para serem respondidas")
 System_Ext(servicebus, "Azure Service Bus", "Fila para processar as respostas de forma desacoplada")
 
 Rel_Right(cdn, users, "Entrega páginas renderizadas", "HTTPS")
 Rel(users, system, "Acessa páginas de questionário e resultados de pesquisas sumarizados")
 Rel(cdn, system, "Encaminha as requisições")
-Rel(system, redis, "Solicita resultados sumarizados")
 Rel(system, mongodb, "Armazena respostas")
 Rel(system, servicebus, "Utiliza fila para coletar e processar respostas")
 
