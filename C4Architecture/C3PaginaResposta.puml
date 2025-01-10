@@ -18,14 +18,16 @@ Container_Boundary(WebApp, "Web Application SSR") {
 
 Container_Boundary(ServColeta, "Serviço de Coleta") {
     Component(contrResposta, "Controller de Publicação de Respostas", "ASP.NET WebApi MVC", "Estrutura a resposta para a publicação")
-    Component(servPublicacao, "Serviço de Publicação de Respostas", "Azure.Messaging.ServiceBus", "Publica respostas de questionários")
+    Component(servPublicacao, "Serviço de Publicação de Respostas", "C#", "Controla a Coleta de Respostas")
+    Component(prodEvent, "Produtor de Pesquisa Respondida", "Azure.Messaging.ServiceBus", "Publica respostas de questionários")
 }
 
 Rel(respondedor, respQuestionario, "Acessa em pesquisapublica/eleitoral/55552024 o", "HTTPS", $tags="async")
 Rel(respQuestionario, cdn, "Renderiza a página para", "HTTPS", $tags="async")
 Rel_Right(cdn, respondedor, "Entrega a página renderizada para", "HTTPS", $tags="async")
 Rel(contrResposta, servPublicacao, "Acessa o", $tags="async")
-Rel(servPublicacao, servicebus, "Publica o questionário respondido em", "AMPQ", $tags="async")
+Rel(servPublicacao, prodEvent, "Acessa o", $tags="async")
+Rel(prodEvent, servicebus, "Publica o questionário respondido em", "AMQP", $tags="async")
 Rel(respQuestionario, contrResposta, "Envia respostas de questionário para pesquisapublica.com/pesquisas/enviar_resposta", "POST/HTTPS/JSON", $tags="async")
 @enduml
 
