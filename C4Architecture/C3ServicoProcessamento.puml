@@ -10,7 +10,7 @@ Container_Boundary(ServProcessamento, "Serviço de Processamento") {
     Component(repoQuestionario, "Repositório de Questionários", "C#, MongoDB.Driver", "Armazena novos questionários e questionários respondidos")
     Component(servConsumer, "Consumidor de Respostas", "C#, Azure.Messaging.ServiceBus", "Processa as respostas de forma desacoplada e garante alta disponibilidade")
     Component(servQuestionario,"Gerenciamento dos Questionários","C#", "Controla os fluxos de criação, armazenamento de respostas e apresentações dos questionários")
-    Component(repoQuestionario, "Repositório de Questionários", "C#, MongoDB.Driver", "Armazena novos questionários e questionários respondidos")
+    Component(repoQuestionario, "Repositório de Questionários", "C#, MongoDB.Client", "Armazena novos questionários e questionários respondidos")
 }
 
 Rel(repoQuestionario, mongodb, "Armazena os questionários respondidos das pesquisas no", $tags="async")
